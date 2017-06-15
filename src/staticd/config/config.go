@@ -1,7 +1,7 @@
 package config
 
 import (
-  "time"
+	"time"
 )
 
 type Config struct {

@@ -1,11 +1,11 @@
 package s3
 
 import (
-  "log"
+	"log"
 
-  "github.com/minio/minio-go"
+	"github.com/minio/minio-go"
 
-  "staticd/config"
+	"staticd/config"
 )
 
 var Client *minio.Client
