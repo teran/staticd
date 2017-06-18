@@ -5,11 +5,11 @@ import (
 )
 
 type Config struct {
-	AllowGet				 bool					 `default:"true"`
-	AllowPut				 bool					 `default:"false"`
+	AllowGet         bool          `default:"true"`
+	AllowPut         bool          `default:"false"`
 	Debug            bool          `required:"false"`
 	Listen           string        `default:":8080"`
-	MaxUploadSize		 int					 `default:"1024"` // MB
+	MaxUploadSize    int           `default:"1024"` // MB
 	S3Endpoint       string        `required:"true"`
 	S3AccessKey      string        `required:"true"`
 	S3SecretKey      string        `required:"true"`
