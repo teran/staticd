@@ -1,9 +1,8 @@
 package s3
 
 import (
-	"log"
-
 	"github.com/minio/minio-go"
+	log "github.com/sirupsen/logrus"
 
 	"staticd/config"
 )
@@ -16,7 +15,7 @@ func Connect(cfg config.Config) *minio.Client {
 		log.Fatalln(err.Error())
 	}
 
-	log.Printf("Successfully created S3 client\n")
+	log.Printf("Successfully created S3 client")
 
 	return c
 }

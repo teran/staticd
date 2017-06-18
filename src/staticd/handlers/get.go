@@ -2,13 +2,14 @@ package handlers
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"staticd/config"
 	"staticd/s3"

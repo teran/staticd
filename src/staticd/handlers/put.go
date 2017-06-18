@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 
 	"staticd/config"
 	"staticd/s3"

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/kelseyhightower/envconfig"
+	log "github.com/sirupsen/logrus"
 
 	"staticd/config"
 	"staticd/handlers"
@@ -30,6 +30,6 @@ func main() {
 	s3.Client = s3.Connect(config.Cfg)
 
 	http.HandleFunc("/", handler)
-	log.Printf("Listening on %v\n", config.Cfg.Listen)
+	log.Printf("Listening on %v", config.Cfg.Listen)
 	http.ListenAndServe(config.Cfg.Listen, nil)
 }
