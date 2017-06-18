@@ -1,5 +1,10 @@
 # staticd
 
+[![Layers size](https://images.microbadger.com/badges/image/teran/staticd.svg)](https://hub.docker.com/r/teran/staticd/)
+![Recent build commit](https://images.microbadger.com/badges/commit/teran/staticd.svg)
+[![Docker Automated build](https://img.shields.io/docker/automated/teran/staticd.svg)](https://hub.docker.com/r/teran/staticd/)
+![License](https://img.shields.io/github/license/teran/staticd.svg)
+
 Web server for static using Amazon S3 compatible API as a backend
 
 ## Usage env vars
