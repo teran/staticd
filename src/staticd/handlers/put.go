@@ -32,4 +32,6 @@ func Put(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(500), 500)
 		return
 	}
+
+	http.Error(w, http.StatusText(201), 201)
 }
