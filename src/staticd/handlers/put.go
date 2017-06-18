@@ -20,7 +20,7 @@ func Put(w http.ResponseWriter, r *http.Request) {
   }
 
   if objectSize > config.Cfg.MaxUploadSize * 1024 * 1024 {
-    log.Printf("PUT %v: %v", objectName, err.Error())
+    log.Printf("PUT %v: object size is higher than allowed limit. HTTP 413 code returned", objectName)
     http.Error(w, http.StatusText(413), 413)
     return
   }
