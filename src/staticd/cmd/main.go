@@ -12,9 +12,9 @@ import (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
+	if r.Method == http.MethodGet && config.Cfg.AllowGet {
 		handlers.Get(w, r)
-	} else if r.Method == http.MethodPut {
+	} else if r.Method == http.MethodPut && config.Cfg.AllowPut {
 		handlers.Put(w, r)
 	} else {
 		http.Error(w, http.StatusText(405), 405)
