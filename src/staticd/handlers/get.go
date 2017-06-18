@@ -18,6 +18,11 @@ import (
 func Get(w http.ResponseWriter, r *http.Request) {
 	objectName := r.URL.Path[1:]
 
+	log.WithFields(log.Fields{
+		"method": "GET",
+		"path":   objectName,
+	}).Info("Incoming request")
+
 	if objectName == "" || strings.HasSuffix(objectName, "/") {
 		GetDirectory(w, r)
 	} else {
@@ -34,7 +39,10 @@ func GetDirectory(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`<html><head><title>Index of /` + objectName + `</title></head><body bgcolor="white"><h1>Index of /` + objectName + `</h1><hr><pre><a href="../">../</a><br>`))
 	for object := range objects {
 		if object.Err != nil {
-			log.Println(object.Err)
+			log.WithFields(log.Fields{
+				"method": "GET",
+				"path":   objectName,
+			}).Warn(object.Err)
 			return
 		}
 		if object.Size == 0 && object.LastModified.IsZero() {
@@ -52,7 +60,10 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 	if config.Cfg.S3Mode == "redirect" {
 		_, err := s3.Client.StatObject(config.Cfg.S3BucketName, objectName)
 		if err != nil {
-			log.Printf("GET %v: %v", objectName, err.Error())
+			log.WithFields(log.Fields{
+				"method": "GET",
+				"path":   objectName,
+			}).Warn(err.Error())
 			http.Error(w, http.StatusText(404), 404)
 			return
 		}
@@ -62,18 +73,28 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 
 		presignedURL, err := s3.Client.PresignedGetObject(config.Cfg.S3BucketName, objectName, config.Cfg.S3RedirectUrlTTL, reqParams)
 		if err != nil {
-			log.Printf("GET %v: %v", objectName, err.Error())
+			log.WithFields(log.Fields{
+				"method": "GET",
+				"path":   objectName,
+			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
 		}
 
 		http.Redirect(w, r, presignedURL.String(), http.StatusFound)
-		log.Printf("GET %v: redirected to %v", objectName, presignedURL)
+		log.WithFields(log.Fields{
+			"method":   "GET",
+			"path":     objectName,
+			"redirect": presignedURL,
+		}).Info("Sent to client")
 		return
 	} else if config.Cfg.S3Mode == "proxy" {
 		objectStat, err := s3.Client.StatObject(config.Cfg.S3BucketName, objectName)
 		if err != nil {
-			log.Printf("GET %v: %v", objectName, err.Error())
+			log.WithFields(log.Fields{
+				"method": "GET",
+				"path":   objectName,
+			}).Warn(err.Error())
 			http.Error(w, http.StatusText(404), 404)
 			return
 		}
@@ -85,22 +106,34 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 
 		object, err := s3.Client.GetObject(config.Cfg.S3BucketName, objectName)
 		if err != nil {
-			log.Printf("GET %v: %v", objectName, err.Error())
+			log.WithFields(log.Fields{
+				"method": "GET",
+				"path":   objectName,
+			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
 		}
 		content, err := ioutil.ReadAll(object)
 		if err != nil {
-			log.Printf("GET %v: %v", objectName, err.Error())
+			log.WithFields(log.Fields{
+				"method": "GET",
+				"path":   objectName,
+			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
 		}
 		w.Write([]byte(content))
-		log.Printf("GET %v: sent to client", objectName)
+		log.WithFields(log.Fields{
+			"method": "GET",
+			"path":   objectName,
+		}).Info("Sent to client")
 		return
 	}
 
 	http.Error(w, http.StatusText(503), 503)
-	log.Printf("GET %v: unknown request", objectName)
+	log.WithFields(log.Fields{
+		"method": "GET",
+		"path":   objectName,
+	}).Warn("Somehing wrong happend on server side, probably it's configuration issue.")
 	return
 }

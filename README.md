@@ -7,7 +7,7 @@
 
 Web server for static using Amazon S3 compatible API as a backend
 
-## Usage env vars
+## Env vars
 
  * `STATICD_ALLOWDELETE` - default:`false`, whether we should handle DELETE requests
  * `STATICD_ALLOWGET` - default:`true`, whether we should handle GET requests
@@ -23,3 +23,25 @@ Web server for static using Amazon S3 compatible API as a backend
  * `STATICD_S3REGION` - S3 region
  * `STATICD_S3REDIRECTURLTTL` - default:`1800s`, TTL for presigned URL, i.e. how long it would stay valid
  * `STATICD_S3USESSL` - `<true|false>`, default:`true` - should we use SSL for backend or not
+
+## Using with curl
+
+staticd supports two operation modes: `proxy` and `redirect`
+
+`proxy` mode serves as simple L7 proxy for all requests, which means all the data handled by staticd
+and proxied to S3 backend.
+
+`redirect` mode sends redirects to S3 endpoint by presigned URL on `GET` and `PUT` requests, which should make each requests
+much faster and safer.
+
+### cURL example to use with redirect mode
+
+#### PUT:
+```
+curl -XPUT -T /my/file -L 'http://staticd-instance:8080/my/file'
+```
+
+#### GET:
+```
+curl -T /my/file -L 'http://staticd-instance:8080/my/file'
+```
