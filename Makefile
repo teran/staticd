@@ -16,22 +16,22 @@ build-linux: build-linux-i386 build-linux-amd64
 build-windows: build-windows-i386 build-windows-amd64
 
 build-macos-i386:
-	GOOS=darwin GOARCH=386 CGO=0 go build -o bin/staticd-darwin-i386 staticd/cmd
+	GOOS=darwin GOARCH=386 CGO_ENABLED=0 go build -o bin/staticd-darwin-i386 staticd/cmd
 
 build-macos-amd64:
-	GOOS=darwin GOARCH=amd64 CGO=0 go build -o bin/staticd-darwin-amd64 staticd/cmd
+	GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -o bin/staticd-darwin-amd64 staticd/cmd
 
 build-linux-i386:
-	GOOS=linux GOARCH=386 CGO=0 go build -o bin/staticd-linux-i386 staticd/cmd
+	GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -o bin/staticd-linux-i386 staticd/cmd
 
 build-linux-amd64:
-	GOOS=linux GOARCH=amd64 CGO=0 go build -o bin/staticd-linux-amd64 staticd/cmd
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o bin/staticd-linux-amd64 staticd/cmd
 
 build-windows-i386:
-	GOOS=windows GOARCH=386 CGO=0 go build -o bin/staticd-windows-i386.exe staticd/cmd
+	GOOS=windows GOARCH=386 CGO_ENABLED=0 go build -o bin/staticd-windows-i386.exe staticd/cmd
 
 build-windows-amd64:
-	GOOS=windows GOARCH=amd64 CGO=0 go build -o bin/staticd-windows-amd64.exe staticd/cmd
+	GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o bin/staticd-windows-amd64.exe staticd/cmd
 
 dependencies:
 	cd src && trash
