@@ -7,6 +7,7 @@ import (
 type Config struct {
 	Debug            bool          `required:"false"`
 	Listen           string        `default:":8080"`
+	MaxUploadSize		 int					 `default:"1024"` // MB
 	S3Endpoint       string        `required:"true"`
 	S3AccessKey      string        `required:"true"`
 	S3SecretKey      string        `required:"true"`

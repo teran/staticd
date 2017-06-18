@@ -12,8 +12,10 @@ import (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
+	if r.Method == http.MethodGet {
 		handlers.Get(w, r)
+	} else if r.Method == http.MethodPut {
+		handlers.Put(w, r)
 	} else {
 		http.Error(w, http.StatusText(405), 405)
 	}
