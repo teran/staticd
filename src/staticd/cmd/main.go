@@ -16,6 +16,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		handlers.Get(w, r)
 	} else if r.Method == http.MethodPut && config.Cfg.AllowPut {
 		handlers.Put(w, r)
+	} else if r.Method == http.MethodDelete && config.Cfg.AllowDelete {
+		handlers.Delete(w, r)
 	} else {
 		http.Error(w, http.StatusText(405), 405)
 	}
