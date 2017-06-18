@@ -15,3 +15,4 @@ bin/
 .glide/
 bin/
 pkg/
+.DS_Store
