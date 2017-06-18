@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -euo pipefail
+
+echo "Build hook running"
+
+IMAGE_NAME=${IMAGE_NAME:-}
+
+docker run -it -v $(pwd):/go golang make clean predependencies dependencies build-linux-amd64
+
+docker build --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+             --build-arg VCS_REF=`git rev-parse --short HEAD` \
+             -t $IMAGE_NAME .

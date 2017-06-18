@@ -1,8 +1,8 @@
-GOPATH := $(PWD)
-GOBIN := $(GOPATH)/bin
-PACKAGES := $(shell env GOPATH=$(GOPATH) go list ./src/staticd/...)
+export GOPATH := $(PWD)
+export GOBIN := $(GOPATH)/bin
+export PACKAGES := $(shell env GOPATH=$(GOPATH) go list ./src/staticd/...)
 
-all: clean dependencies build
+all: clean predependencies dependencies build
 
 clean:
 	rm -vf bin/*
@@ -33,12 +33,11 @@ build-windows-i386:
 build-windows-amd64:
 	GOOS=windows GOARCH=amd64 CGO=0 go build -o bin/staticd-windows-amd64.exe staticd/cmd
 
-install: clean dependencies build sign verify
-	mkdir -p ~/.bin
-	install -m0755 bin/staticd-darwin-amd64 ~/.bin/staticd
-
 dependencies:
 	cd src && trash
+
+predependencies:
+	go get -u github.com/rancher/trash
 
 sign:
 	gpg --detach-sign --digest-algo SHA512 --no-tty --batch --output bin/staticd-darwin-i386.sig 				bin/staticd-darwin-i386
