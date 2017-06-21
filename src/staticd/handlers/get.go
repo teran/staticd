@@ -12,6 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"staticd/config"
+	"staticd/helpers"
 	"staticd/s3"
 )
 
@@ -46,9 +47,9 @@ func GetDirectory(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if object.Size == 0 && object.LastModified.IsZero() {
-			w.Write([]byte(`<a href="/` + object.Key + `">` + path.Base(object.Key) + `/</a>                                        -            -<br>`))
+			w.Write([]byte(helpers.PadLink(path.Base(object.Key), "/"+object.Key, 45) + helpers.PadText("-", 20) + `      -<br>`))
 		} else {
-			w.Write([]byte(`<a href="/` + object.Key + `">` + path.Base(object.Key) + `</a>                                        ` + object.LastModified.Format(time.RFC3339) + `            ` + strconv.FormatInt(object.Size, 10) + `<br>`))
+			w.Write([]byte(helpers.PadLink(path.Base(object.Key), "/"+object.Key, 45) + helpers.PadText(object.LastModified.Format(time.RFC3339), 20) + strconv.FormatInt(object.Size, 10) + `<br>`))
 		}
 	}
 	w.Write([]byte(`</pre><hr><center>staticd</center></body></html>`))
