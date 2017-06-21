@@ -5,6 +5,7 @@ import (
 )
 
 type Config struct {
+	AllowAutoindex   bool          `default:"true"`
 	AllowDelete      bool          `default:"false"`
 	AllowGet         bool          `default:"true"`
 	AllowPut         bool          `default:"false"`

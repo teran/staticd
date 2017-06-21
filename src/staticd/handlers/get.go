@@ -32,6 +32,11 @@ func Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetDirectory(w http.ResponseWriter, r *http.Request) {
+	if !config.Cfg.AllowAutoindex {
+		http.Error(w, http.StatusText(403), 403)
+		return
+	}
+
 	objectName := r.URL.Path[1:]
 
 	doneCh := make(chan struct{})
