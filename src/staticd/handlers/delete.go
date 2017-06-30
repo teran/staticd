@@ -14,14 +14,14 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	log.WithFields(log.Fields{
 		"method": "DELETE",
-		"path":   objectName,
+		"path":   "/" + objectName,
 	}).Info("Incoming request")
 
 	err := s3.Client.RemoveObject(config.Cfg.S3BucketName, objectName)
 	if err != nil {
 		log.WithFields(log.Fields{
 			"method": "DELETE",
-			"path":   objectName,
+			"path":   "/" + objectName,
 		}).Warn(err.Error())
 		http.Error(w, http.StatusText(500), 500)
 		return
@@ -30,6 +30,6 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, http.StatusText(204), 204)
 	log.WithFields(log.Fields{
 		"method": "DELETE",
-		"path":   objectName,
+		"path":   "/" + objectName,
 	}).Info("Object successfully deleted")
 }

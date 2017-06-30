@@ -21,7 +21,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 
 	log.WithFields(log.Fields{
 		"method": "GET",
-		"path":   objectName,
+		"path":   "/" + objectName,
 	}).Info("Incoming request")
 
 	if objectName == "" || strings.HasSuffix(objectName, "/") {
@@ -47,7 +47,7 @@ func GetDirectory(w http.ResponseWriter, r *http.Request) {
 		if object.Err != nil {
 			log.WithFields(log.Fields{
 				"method": "GET",
-				"path":   objectName,
+				"path":   "/" + objectName,
 			}).Warn(object.Err)
 			return
 		}
@@ -68,7 +68,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.WithFields(log.Fields{
 				"method": "GET",
-				"path":   objectName,
+				"path":   "/" + objectName,
 			}).Warn(err.Error())
 			http.Error(w, http.StatusText(404), 404)
 			return
@@ -81,7 +81,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.WithFields(log.Fields{
 				"method": "GET",
-				"path":   objectName,
+				"path":   "/" + objectName,
 			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
@@ -90,7 +90,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, presignedURL.String(), http.StatusFound)
 		log.WithFields(log.Fields{
 			"method":   "GET",
-			"path":     objectName,
+			"path":     "/" + objectName,
 			"redirect": presignedURL,
 		}).Info("Sent to client")
 		return
@@ -99,7 +99,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.WithFields(log.Fields{
 				"method": "GET",
-				"path":   objectName,
+				"path":   "/" + objectName,
 			}).Warn(err.Error())
 			http.Error(w, http.StatusText(404), 404)
 			return
@@ -114,7 +114,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.WithFields(log.Fields{
 				"method": "GET",
-				"path":   objectName,
+				"path":   "/" + objectName,
 			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
@@ -123,7 +123,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.WithFields(log.Fields{
 				"method": "GET",
-				"path":   objectName,
+				"path":   "/" + objectName,
 			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
@@ -131,7 +131,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(content))
 		log.WithFields(log.Fields{
 			"method": "GET",
-			"path":   objectName,
+			"path":   "/" + objectName,
 		}).Info("Sent to client")
 		return
 	}
@@ -139,7 +139,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, http.StatusText(503), 503)
 	log.WithFields(log.Fields{
 		"method": "GET",
-		"path":   objectName,
+		"path":   "/" + objectName,
 	}).Warn("Somehing wrong happend on server side, probably it's configuration issue.")
 	return
 }
