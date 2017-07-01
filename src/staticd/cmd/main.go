@@ -12,6 +12,11 @@ import (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	log.WithFields(log.Fields{
+		"method": r.Method,
+		"path":   "/" + r.URL.Path[1:],
+	}).Info("Incoming request")
+
 	if r.Method == http.MethodGet && config.Cfg.AllowGet {
 		handlers.Get(w, r)
 	} else if r.Method == http.MethodPut && config.Cfg.AllowPut {

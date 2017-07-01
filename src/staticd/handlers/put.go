@@ -13,11 +13,6 @@ import (
 func Put(w http.ResponseWriter, r *http.Request) {
 	objectName := r.URL.Path[1:]
 
-	log.WithFields(log.Fields{
-		"method": "PUT",
-		"path":   "/" + objectName,
-	}).Info("Incoming request")
-
 	objectSize, err := strconv.Atoi(r.Header["Content-Length"][0])
 	if err != nil {
 		log.WithFields(log.Fields{

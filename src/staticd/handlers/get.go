@@ -19,11 +19,6 @@ import (
 func Get(w http.ResponseWriter, r *http.Request) {
 	objectName := r.URL.Path[1:]
 
-	log.WithFields(log.Fields{
-		"method": "GET",
-		"path":   "/" + objectName,
-	}).Info("Incoming request")
-
 	if objectName == "" || strings.HasSuffix(objectName, "/") {
 		GetDirectory(w, r)
 	} else {
@@ -63,17 +58,17 @@ func GetDirectory(w http.ResponseWriter, r *http.Request) {
 func GetFile(w http.ResponseWriter, r *http.Request) {
 	objectName := r.URL.Path[1:]
 
-	if config.Cfg.S3Mode == "redirect" {
-		_, err := s3.Client.StatObject(config.Cfg.S3BucketName, objectName)
-		if err != nil {
-			log.WithFields(log.Fields{
-				"method": "GET",
-				"path":   "/" + objectName,
-			}).Warn(err.Error())
-			http.Error(w, http.StatusText(404), 404)
-			return
-		}
+	objectStat, err := s3.Client.StatObject(config.Cfg.S3BucketName, objectName)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"method": "GET",
+			"path":   "/" + objectName,
+		}).Warn(err.Error())
+		http.Error(w, http.StatusText(404), 404)
+		return
+	}
 
+	if config.Cfg.S3Mode == "redirect" {
 		reqParams := make(url.Values)
 		reqParams.Set("response-content-disposition", "attachment; filename=\""+objectName+"\"")
 
@@ -95,16 +90,6 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 		}).Info("Sent to client")
 		return
 	} else if config.Cfg.S3Mode == "proxy" {
-		objectStat, err := s3.Client.StatObject(config.Cfg.S3BucketName, objectName)
-		if err != nil {
-			log.WithFields(log.Fields{
-				"method": "GET",
-				"path":   "/" + objectName,
-			}).Warn(err.Error())
-			http.Error(w, http.StatusText(404), 404)
-			return
-		}
-
 		w.Header().Set("Content-Type", objectStat.ContentType)
 		w.Header().Set("Content-Length", strconv.FormatInt(objectStat.Size, 10))
 		w.Header().Set("Last-Modified", objectStat.LastModified.Format(http.TimeFormat))

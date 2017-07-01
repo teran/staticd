@@ -12,11 +12,6 @@ import (
 func Delete(w http.ResponseWriter, r *http.Request) {
 	objectName := r.URL.Path[1:]
 
-	log.WithFields(log.Fields{
-		"method": "DELETE",
-		"path":   "/" + objectName,
-	}).Info("Incoming request")
-
 	err := s3.Client.RemoveObject(config.Cfg.S3BucketName, objectName)
 	if err != nil {
 		log.WithFields(log.Fields{
