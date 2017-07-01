@@ -19,6 +19,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet && config.Cfg.AllowGet {
 		handlers.Get(w, r)
+	} else if r.Method == http.MethodHead && config.Cfg.AllowHead {
+		handlers.Head(w, r)
 	} else if r.Method == http.MethodPut && config.Cfg.AllowPut {
 		handlers.Put(w, r)
 	} else if r.Method == http.MethodDelete && config.Cfg.AllowDelete {

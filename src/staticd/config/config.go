@@ -7,6 +7,7 @@ import (
 type Config struct {
 	AllowAutoindex   bool          `default:"true"`
 	AllowDelete      bool          `default:"false"`
+	AllowHead        bool          `default:"true"`
 	AllowGet         bool          `default:"true"`
 	AllowPut         bool          `default:"false"`
 	Debug            bool          `required:"false"`
