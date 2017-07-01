@@ -15,6 +15,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	err := s3.Client.RemoveObject(config.Cfg.S3BucketName, objectName)
 	if err != nil {
 		log.WithFields(log.Fields{
+			"remote": r.RemoteAddr,
 			"method": "DELETE",
 			"path":   "/" + objectName,
 		}).Warn(err.Error())
@@ -24,7 +25,9 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	http.Error(w, http.StatusText(204), 204)
 	log.WithFields(log.Fields{
+		"remote": r.RemoteAddr,
 		"method": "DELETE",
 		"path":   "/" + objectName,
 	}).Info("Object successfully deleted")
+	return
 }

@@ -16,6 +16,7 @@ func Put(w http.ResponseWriter, r *http.Request) {
 	objectSize, err := strconv.Atoi(r.Header["Content-Length"][0])
 	if err != nil {
 		log.WithFields(log.Fields{
+			"remote": r.RemoteAddr,
 			"method": "PUT",
 			"path":   "/" + objectName,
 		}).Warn(err.Error())
@@ -25,6 +26,7 @@ func Put(w http.ResponseWriter, r *http.Request) {
 
 	if objectSize > config.Cfg.MaxUploadSize*1024*1024 {
 		log.WithFields(log.Fields{
+			"remote": r.RemoteAddr,
 			"method": "PUT",
 			"path":   "/" + objectName,
 		}).Warn("Object is bigger than allowed by server configuration")
@@ -36,6 +38,7 @@ func Put(w http.ResponseWriter, r *http.Request) {
 		presignedURL, err := s3.Client.PresignedPutObject(config.Cfg.S3BucketName, objectName, config.Cfg.S3RedirectUrlTTL)
 		if err != nil {
 			log.WithFields(log.Fields{
+				"remote": r.RemoteAddr,
 				"method": "PUT",
 				"path":   "/" + objectName,
 			}).Warn(err.Error())
@@ -45,6 +48,7 @@ func Put(w http.ResponseWriter, r *http.Request) {
 
 		http.Redirect(w, r, presignedURL.String(), http.StatusFound)
 		log.WithFields(log.Fields{
+			"remote": r.RemoteAddr,
 			"method":   "PUT",
 			"path":     "/" + objectName,
 			"redirect": presignedURL,
@@ -55,6 +59,7 @@ func Put(w http.ResponseWriter, r *http.Request) {
 	_, err = s3.Client.PutObject(config.Cfg.S3BucketName, objectName, r.Body, "application/octet-stream")
 	if err != nil {
 		log.WithFields(log.Fields{
+			"remote": r.RemoteAddr,
 			"method": "PUT",
 			"path":   "/" + objectName,
 		}).Warn(err.Error())
@@ -64,7 +69,9 @@ func Put(w http.ResponseWriter, r *http.Request) {
 
 	http.Error(w, http.StatusText(201), 201)
 	log.WithFields(log.Fields{
+		"remote": r.RemoteAddr,
 		"method": "PUT",
 		"path":   "/" + objectName,
 	}).Info("Object successfully created")
+	return
 }

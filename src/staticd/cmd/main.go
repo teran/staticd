@@ -13,6 +13,7 @@ import (
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	log.WithFields(log.Fields{
+		"remote": r.RemoteAddr,
 		"method": r.Method,
 		"path":   "/" + r.URL.Path[1:],
 	}).Info("Incoming request")

@@ -37,6 +37,7 @@ func HeadDirectory(w http.ResponseWriter, r *http.Request) {
 	for object := range objects {
 		if object.Err != nil {
 			log.WithFields(log.Fields{
+				"remote": r.RemoteAddr,
 				"method": "HEAD",
 				"path":   "/" + objectName,
 			}).Warn(object.Err)
@@ -51,6 +52,7 @@ func HeadFile(w http.ResponseWriter, r *http.Request) {
 	objectStat, err := s3.Client.StatObject(config.Cfg.S3BucketName, objectName)
 	if err != nil {
 		log.WithFields(log.Fields{
+			"remote": r.RemoteAddr,
 			"method": "HEAD",
 			"path":   "/" + objectName,
 		}).Warn(err.Error())
@@ -65,6 +67,7 @@ func HeadFile(w http.ResponseWriter, r *http.Request) {
 		presignedURL, err := s3.Client.PresignedGetObject(config.Cfg.S3BucketName, objectName, config.Cfg.S3RedirectUrlTTL, reqParams)
 		if err != nil {
 			log.WithFields(log.Fields{
+				"remote": r.RemoteAddr,
 				"method": "HEAD",
 				"path":   "/" + objectName,
 			}).Warn(err.Error())
@@ -74,6 +77,7 @@ func HeadFile(w http.ResponseWriter, r *http.Request) {
 
 		http.Redirect(w, r, presignedURL.String(), http.StatusFound)
 		log.WithFields(log.Fields{
+			"remote": r.RemoteAddr,
 			"method":   "HEAD",
 			"path":     "/" + objectName,
 			"redirect": presignedURL,
@@ -88,6 +92,7 @@ func HeadFile(w http.ResponseWriter, r *http.Request) {
 		object, err := s3.Client.GetObject(config.Cfg.S3BucketName, objectName)
 		if err != nil {
 			log.WithFields(log.Fields{
+				"remote": r.RemoteAddr,
 				"method": "HEAD",
 				"path":   "/" + objectName,
 			}).Warn(err.Error())
@@ -97,6 +102,7 @@ func HeadFile(w http.ResponseWriter, r *http.Request) {
 		content, err := ioutil.ReadAll(object)
 		if err != nil {
 			log.WithFields(log.Fields{
+				"remote": r.RemoteAddr,
 				"method": "HEAD",
 				"path":   "/" + objectName,
 			}).Warn(err.Error())
@@ -105,6 +111,7 @@ func HeadFile(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Write([]byte(content))
 		log.WithFields(log.Fields{
+			"remote": r.RemoteAddr,
 			"method": "HEAD",
 			"path":   "/" + objectName,
 		}).Info("Sent to client")
@@ -113,6 +120,7 @@ func HeadFile(w http.ResponseWriter, r *http.Request) {
 
 	http.Error(w, http.StatusText(503), 503)
 	log.WithFields(log.Fields{
+		"remote": r.RemoteAddr,
 		"method": "HEAD",
 		"path":   "/" + objectName,
 	}).Warn("Somehing wrong happend on server side, probably it's configuration issue.")
