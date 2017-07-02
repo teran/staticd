@@ -19,6 +19,7 @@ func Put(w http.ResponseWriter, r *http.Request) {
 			"remote": r.RemoteAddr,
 			"method": "PUT",
 			"path":   "/" + objectName,
+			"return": "400 " + http.StatusText(400),
 		}).Warn(err.Error())
 		http.Error(w, http.StatusText(400), 400)
 		return
@@ -29,6 +30,7 @@ func Put(w http.ResponseWriter, r *http.Request) {
 			"remote": r.RemoteAddr,
 			"method": "PUT",
 			"path":   "/" + objectName,
+			"return": "413 " + http.StatusText(413),
 		}).Warn("Object is bigger than allowed by server configuration")
 		http.Error(w, http.StatusText(413), 413)
 		return
@@ -41,6 +43,7 @@ func Put(w http.ResponseWriter, r *http.Request) {
 				"remote": r.RemoteAddr,
 				"method": "PUT",
 				"path":   "/" + objectName,
+				"return": "503 " + http.StatusText(503),
 			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
@@ -62,16 +65,17 @@ func Put(w http.ResponseWriter, r *http.Request) {
 			"remote": r.RemoteAddr,
 			"method": "PUT",
 			"path":   "/" + objectName,
+			"return": "500 " + http.StatusText(500),
 		}).Warn(err.Error())
 		http.Error(w, http.StatusText(500), 500)
 		return
 	}
 
-	http.Error(w, http.StatusText(201), 201)
 	log.WithFields(log.Fields{
 		"remote": r.RemoteAddr,
 		"method": "PUT",
 		"path":   "/" + objectName,
 	}).Info("Object successfully created")
+	http.Error(w, http.StatusText(201), 201)
 	return
 }

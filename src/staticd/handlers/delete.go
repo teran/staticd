@@ -16,18 +16,19 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.WithFields(log.Fields{
 			"remote": r.RemoteAddr,
-			"method": "DELETE",
-			"path":   "/" + objectName,
+			"method": r.Method,
+			"path":   "/" + r.URL.Path[1:],
+			"return": "500 " + http.StatusText(500),
 		}).Warn(err.Error())
 		http.Error(w, http.StatusText(500), 500)
 		return
 	}
 
-	http.Error(w, http.StatusText(204), 204)
 	log.WithFields(log.Fields{
 		"remote": r.RemoteAddr,
 		"method": "DELETE",
 		"path":   "/" + objectName,
 	}).Info("Object successfully deleted")
+	http.Error(w, http.StatusText(204), 204)
 	return
 }

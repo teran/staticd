@@ -40,7 +40,9 @@ func HeadDirectory(w http.ResponseWriter, r *http.Request) {
 				"remote": r.RemoteAddr,
 				"method": "HEAD",
 				"path":   "/" + objectName,
+				"return": "503 " + http.StatusText(503),
 			}).Warn(object.Err)
+			http.Error(w, http.StatusText(503), 503)
 			return
 		}
 	}
@@ -55,6 +57,7 @@ func HeadFile(w http.ResponseWriter, r *http.Request) {
 			"remote": r.RemoteAddr,
 			"method": "HEAD",
 			"path":   "/" + objectName,
+			"return": "404 " + http.StatusText(404),
 		}).Warn(err.Error())
 		http.Error(w, http.StatusText(404), 404)
 		return
@@ -70,6 +73,7 @@ func HeadFile(w http.ResponseWriter, r *http.Request) {
 				"remote": r.RemoteAddr,
 				"method": "HEAD",
 				"path":   "/" + objectName,
+				"return": "503 " + http.StatusText(503),
 			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
@@ -95,6 +99,7 @@ func HeadFile(w http.ResponseWriter, r *http.Request) {
 				"remote": r.RemoteAddr,
 				"method": "HEAD",
 				"path":   "/" + objectName,
+				"return": "503 " + http.StatusText(503),
 			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
@@ -105,6 +110,7 @@ func HeadFile(w http.ResponseWriter, r *http.Request) {
 				"remote": r.RemoteAddr,
 				"method": "HEAD",
 				"path":   "/" + objectName,
+				"return": "503 " + http.StatusText(503),
 			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
@@ -118,11 +124,12 @@ func HeadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Error(w, http.StatusText(503), 503)
 	log.WithFields(log.Fields{
 		"remote": r.RemoteAddr,
 		"method": "HEAD",
 		"path":   "/" + objectName,
+		"return": "503 " + http.StatusText(503),
 	}).Warn("Somehing wrong happend on server side, probably it's configuration issue.")
+	http.Error(w, http.StatusText(503), 503)
 	return
 }

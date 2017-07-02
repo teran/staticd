@@ -33,27 +33,31 @@ func GetDirectory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	objectName := r.URL.Path[1:]
+	var fileList []string
 
 	doneCh := make(chan struct{})
 	defer close(doneCh)
 	objects := s3.Client.ListObjects(config.Cfg.S3BucketName, objectName, false, doneCh)
-	w.Write([]byte(`<html><head><title>Index of /` + objectName + `</title></head><body bgcolor="white"><h1>Index of /` + objectName + `</h1><hr><pre><a href="../">../</a><br>`))
+	fileList = append(fileList, `<html><head><title>Index of /`+objectName+`</title></head><body bgcolor="white"><h1>Index of /`+objectName+`</h1><hr><pre><a href="../">../</a><br>`)
 	for object := range objects {
 		if object.Err != nil {
 			log.WithFields(log.Fields{
 				"remote": r.RemoteAddr,
 				"method": "GET",
 				"path":   "/" + objectName,
+				"return": "503 " + http.StatusText(503),
 			}).Warn(object.Err)
+			http.Error(w, http.StatusText(503), 503)
 			return
 		}
 		if object.Size == 0 && object.LastModified.IsZero() {
-			w.Write([]byte(helpers.PadLink(path.Base(object.Key), "/"+object.Key, 45) + helpers.PadText("-", 20) + `      -<br>`))
+			fileList = append(fileList, helpers.PadLink(path.Base(object.Key), "/"+object.Key, 45)+helpers.PadText("-", 20)+`      -<br>`)
 		} else {
-			w.Write([]byte(helpers.PadLink(path.Base(object.Key), "/"+object.Key, 45) + helpers.PadText(object.LastModified.Format(time.RFC3339), 20) + strconv.FormatInt(object.Size, 10) + `<br>`))
+			fileList = append(fileList, helpers.PadLink(path.Base(object.Key), "/"+object.Key, 45)+helpers.PadText(object.LastModified.Format(time.RFC3339), 20)+strconv.FormatInt(object.Size, 10)+`<br>`)
 		}
 	}
-	w.Write([]byte(`</pre><hr><center>staticd</center></body></html>`))
+	fileList = append(fileList, `</pre><hr><center>staticd</center></body></html>`)
+	w.Write([]byte(strings.Join(fileList, "")))
 }
 
 func GetFile(w http.ResponseWriter, r *http.Request) {
@@ -65,6 +69,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 			"remote": r.RemoteAddr,
 			"method": "GET",
 			"path":   "/" + objectName,
+			"return": "404 " + http.StatusText(404),
 		}).Warn(err.Error())
 		http.Error(w, http.StatusText(404), 404)
 		return
@@ -80,6 +85,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 				"remote": r.RemoteAddr,
 				"method": "GET",
 				"path":   "/" + objectName,
+				"return": "503 " + http.StatusText(503),
 			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
@@ -105,6 +111,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 				"remote": r.RemoteAddr,
 				"method": "GET",
 				"path":   "/" + objectName,
+				"return": "503 " + http.StatusText(503),
 			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
@@ -115,6 +122,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 				"remote": r.RemoteAddr,
 				"method": "GET",
 				"path":   "/" + objectName,
+				"return": "503 " + http.StatusText(503),
 			}).Warn(err.Error())
 			http.Error(w, http.StatusText(503), 503)
 			return
@@ -128,11 +136,12 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Error(w, http.StatusText(503), 503)
 	log.WithFields(log.Fields{
 		"remote": r.RemoteAddr,
 		"method": "GET",
 		"path":   "/" + objectName,
+		"return": "503 " + http.StatusText(503),
 	}).Warn("Somehing wrong happend on server side, probably it's configuration issue.")
+	http.Error(w, http.StatusText(503), 503)
 	return
 }

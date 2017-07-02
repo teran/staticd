@@ -28,13 +28,26 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		handlers.Delete(w, r)
 	} else {
 		http.Error(w, http.StatusText(405), 405)
+		log.WithFields(log.Fields{
+			"remote": r.RemoteAddr,
+			"method": r.Method,
+			"path":   "/" + r.URL.Path[1:],
+			"return": "405 Method not allowed",
+		}).Warn("Method not allowed by configuration")
 	}
 }
 
 func main() {
+	log.SetFormatter(&log.TextFormatter{})
 	err := envconfig.Process("staticd", &config.Cfg)
 	if err != nil {
 		log.Fatalln(err.Error())
+	}
+
+	if config.Cfg.Debug {
+		log.SetLevel(log.DebugLevel)
+	} else {
+		log.SetLevel(log.InfoLevel)
 	}
 
 	s3.Client = s3.Connect(config.Cfg)
