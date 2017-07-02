@@ -35,6 +35,14 @@ func HeadDirectory(w http.ResponseWriter, r *http.Request) {
 	defer close(doneCh)
 	objects := s3.Client.ListObjects(config.Cfg.S3BucketName, objectName, false, doneCh)
 	for object := range objects {
+		objectName := object.Key
+		objectSize := strconv.FormatInt(object.Size, 10)
+
+		log.WithFields(log.Fields{
+			"remote": r.RemoteAddr,
+			"method": "GET",
+			"path":   "/" + objectName,
+		}).Debugf("Listing objects from s3 backend: name=%v ; size=%v", objectName, objectSize)
 		if object.Err != nil {
 			log.WithFields(log.Fields{
 				"remote": r.RemoteAddr,

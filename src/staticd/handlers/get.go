@@ -47,6 +47,15 @@ func GetDirectory(w http.ResponseWriter, r *http.Request) {
 	objects := s3.Client.ListObjects(config.Cfg.S3BucketName, objectName, false, doneCh)
 	fileList = append(fileList, `<html><head><title>Index of /`+objectName+`</title></head><body bgcolor="white"><h1>Index of /`+objectName+`</h1><hr><pre><a href="../">../</a><br>`)
 	for object := range objects {
+		objectName := object.Key
+		objectSize := strconv.FormatInt(object.Size, 10)
+		objectLastModified := object.LastModified.Format(time.RFC3339)
+
+		log.WithFields(log.Fields{
+			"remote": r.RemoteAddr,
+			"method": "GET",
+			"path":   "/" + objectName,
+		}).Debugf("Listing objects from s3 backend: name=%v ; size=%v", objectName, objectSize)
 		if object.Err != nil {
 			log.WithFields(log.Fields{
 				"remote": r.RemoteAddr,
@@ -58,9 +67,9 @@ func GetDirectory(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if object.Size == 0 && object.LastModified.IsZero() {
-			fileList = append(fileList, helpers.PadLink(path.Base(object.Key), "/"+object.Key, 45)+helpers.PadText("-", 20)+`      -<br>`)
+			fileList = append(fileList, helpers.PadLink(path.Base(objectName), "/"+objectName, 45)+helpers.PadText("-", 20)+`      -<br>`)
 		} else {
-			fileList = append(fileList, helpers.PadLink(path.Base(object.Key), "/"+object.Key, 45)+helpers.PadText(object.LastModified.Format(time.RFC3339), 20)+strconv.FormatInt(object.Size, 10)+`<br>`)
+			fileList = append(fileList, helpers.PadLink(path.Base(objectName), "/"+objectName, 45)+helpers.PadText(objectLastModified, 20)+objectSize+`<br>`)
 		}
 	}
 	fileList = append(fileList, `</pre><hr><center>staticd</center></body></html>`)
@@ -81,6 +90,12 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(404), 404)
 		return
 	}
+
+	log.WithFields(log.Fields{
+		"remote": r.RemoteAddr,
+		"method": "GET",
+		"path":   "/" + objectName,
+	}).Debugf("Stat object in s3 backend: name=%v ; size=%v", objectName, strconv.FormatInt(objectStat.Size, 10))
 
 	if config.Cfg.S3Mode == "redirect" {
 		reqParams := make(url.Values)
