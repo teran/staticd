@@ -13,7 +13,7 @@ Web server for static using Amazon S3 compatible API as a backend
  * `STATICD_ALLOWDELETE` - default:`false`, whether we should handle DELETE requests
  * `STATICD_ALLOWGET` - default:`true`, whether we should handle GET requests
  * `STATICD_ALLOWPUT` - default:`false`, whether we should handle PUT requests
- * `STATICD_DEBUG` - Set log verbosing to debug(not implemented yet)
+ * `STATICD_DEBUG` - Set log verbosing to debug
  * `STATICD_LISTEN` - default:`:8080`, address to listen on
  * `STATICD_MAXUPLOADSIZE` - default:`1024`, size in MBytes with max allowed file size to upload
  * `STATICD_S3ACCESSKEY` - S3 access key
