@@ -48,7 +48,7 @@ func Put(w http.ResponseWriter, r *http.Request) {
 
 		http.Redirect(w, r, presignedURL.String(), http.StatusFound)
 		log.WithFields(log.Fields{
-			"remote": r.RemoteAddr,
+			"remote":   r.RemoteAddr,
 			"method":   "PUT",
 			"path":     "/" + objectName,
 			"redirect": presignedURL,
