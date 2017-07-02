@@ -40,6 +40,6 @@ func main() {
 	s3.Client = s3.Connect(config.Cfg)
 
 	http.HandleFunc("/", handler)
-	log.Printf("Listening on %v", config.Cfg.Listen)
+	log.Infof("Listening on %v", config.Cfg.Listen)
 	http.ListenAndServe(config.Cfg.Listen, nil)
 }

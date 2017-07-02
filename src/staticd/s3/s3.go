@@ -15,7 +15,7 @@ func Connect(cfg config.Config) *minio.Client {
 		log.Fatalln(err.Error())
 	}
 
-	log.Printf("Successfully created S3 client")
+	log.Info("Successfully created S3 client")
 
 	return c
 }
