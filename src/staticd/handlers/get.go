@@ -27,12 +27,19 @@ func Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetDirectory(w http.ResponseWriter, r *http.Request) {
+	objectName := r.URL.Path[1:]
+
 	if !config.Cfg.AllowAutoindex {
+		log.WithFields(log.Fields{
+			"remote": r.RemoteAddr,
+			"method": "GET",
+			"path":   "/" + objectName,
+			"return": "403 " + http.StatusText(403),
+		}).Warn("Attempt to access directory listing")
 		http.Error(w, http.StatusText(403), 403)
 		return
 	}
 
-	objectName := r.URL.Path[1:]
 	var fileList []string
 
 	doneCh := make(chan struct{})
