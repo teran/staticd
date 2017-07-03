@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/kelseyhightower/envconfig"
-	log "github.com/sirupsen/logrus"
 	"github.com/prometheus/client_golang/prometheus"
+	log "github.com/sirupsen/logrus"
 
 	"staticd/config"
 	"staticd/handlers"
