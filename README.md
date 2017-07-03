@@ -15,6 +15,7 @@ Web server for static using Amazon S3 compatible API as a backend
  * `STATICD_ALLOWPUT` - default:`false`, whether we should handle PUT requests
  * `STATICD_DEBUG` - Set log verbosing to debug
  * `STATICD_LISTEN` - default:`:8080`, address to listen on
+ * `STATICD_LISTENMONITORING` - default:`:8081`, address to listen monitoring data
  * `STATICD_MAXUPLOADSIZE` - default:`1024`, size in MBytes with max allowed file size to upload
  * `STATICD_S3ACCESSKEY` - S3 access key
  * `STATICD_S3BUCKETNAME` - S3 bucket name

@@ -12,6 +12,7 @@ type Config struct {
 	AllowPut         bool          `default:"false"`
 	Debug            bool          `required:"false"`
 	Listen           string        `default:":8080"`
+	ListenMonitoring string        `default:":8081"`
 	MaxUploadSize    int           `default:"1024"` // MB
 	S3Endpoint       string        `required:"true"`
 	S3AccessKey      string        `required:"true"`

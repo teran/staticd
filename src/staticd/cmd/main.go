@@ -5,9 +5,11 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
+	"github.com/prometheus/client_golang/prometheus"
 
 	"staticd/config"
 	"staticd/handlers"
+	"staticd/monitoring"
 	"staticd/s3"
 )
 
@@ -35,6 +37,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			"return": "405 Method not allowed",
 		}).Warn("Method not allowed by configuration")
 	}
+	monitoring.Requests.With(prometheus.Labels{"method": r.Method}).Inc()
+	monitoring.Requests.With(prometheus.Labels{"method": "total"}).Inc()
+
+	return
 }
 
 func main() {
@@ -52,7 +58,10 @@ func main() {
 
 	s3.Client = s3.Connect(config.Cfg)
 
-	http.HandleFunc("/", handler)
+	mainMux := http.NewServeMux()
+	mainMux.HandleFunc("/", handler)
 	log.Infof("Listening on %v", config.Cfg.Listen)
-	http.ListenAndServe(config.Cfg.Listen, nil)
+
+	go monitoring.RunPrometheusServer(config.Cfg)
+	http.ListenAndServe(config.Cfg.Listen, mainMux)
 }
