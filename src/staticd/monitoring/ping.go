@@ -10,6 +10,8 @@ import (
 )
 
 func PingHandler(w http.ResponseWriter, r *http.Request) {
+	s3.Client = s3.Connect(config.Cfg)
+
 	exists, err := s3.Client.BucketExists(config.Cfg.S3BucketName)
 	if err != nil || !exists {
 		log.WithFields(log.Fields{
