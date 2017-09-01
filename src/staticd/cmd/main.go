@@ -14,6 +14,8 @@ import (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	s3.Client = s3.Connect(config.Cfg)
+
 	log.WithFields(log.Fields{
 		"remote": r.RemoteAddr,
 		"method": r.Method,
@@ -55,8 +57,6 @@ func main() {
 	} else {
 		log.SetLevel(log.InfoLevel)
 	}
-
-	s3.Client = s3.Connect(config.Cfg)
 
 	mainMux := http.NewServeMux()
 	mainMux.HandleFunc("/", handler)
